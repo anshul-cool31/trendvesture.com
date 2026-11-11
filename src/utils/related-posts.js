@@ -17,3 +17,4 @@ export function getRelatedPosts(currentPost, allPosts, limit = 3) {
   scored.sort((a, b) => b.score - a.score || new Date(b.post.data.pubDate) - new Date(a.post.data.pubDate));
   return scored.slice(0, limit).map(s => s.post);
 }
+

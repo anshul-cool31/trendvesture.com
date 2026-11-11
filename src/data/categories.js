@@ -154,3 +154,4 @@ export function getSubcategoryBySlug(categorySlug, subcategorySlug) {
   if (!category) return null;
   return category.subcategories.find(sub => sub.slug === subcategorySlug);
 }
+

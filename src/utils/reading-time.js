@@ -6,3 +6,4 @@ export function getReadingTime(content) {
   const minutes = Math.ceil(words / wordsPerMinute);
   return `${minutes} min read`;
 }
+

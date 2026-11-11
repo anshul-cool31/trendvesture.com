@@ -301,3 +301,4 @@ netlify deploy --prod --dir=dist
 
 ## 📄 License
 © 2026 TrendVesture Magazine. All rights reserved.
+

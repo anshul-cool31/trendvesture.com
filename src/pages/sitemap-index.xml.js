@@ -63,3 +63,4 @@ ${allUrls.map(u => `  <url>
     }
   });
 }
+

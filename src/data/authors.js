@@ -40,3 +40,4 @@ export function getAuthorBySlug(slug) {
 export function getAuthorByName(name) {
   return authors.find(author => author.name.toLowerCase() === name.toLowerCase());
 }
+

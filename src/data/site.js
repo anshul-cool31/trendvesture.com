@@ -25,3 +25,4 @@ export const siteConfig = {
     copyright: `© ${new Date().getFullYear()} TrendVesture Magazine. All rights reserved.`
   }
 };
+

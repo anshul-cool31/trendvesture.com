@@ -1,0 +1,305 @@
+---
+import { navigation } from '../data/navigation.js';
+import { siteConfig } from '../data/site.js';
+import Logo from './Logo.astro';
+---
+
+<div id="mobile-menu-drawer" class="mobile-drawer" aria-hidden="true">
+  <div class="mobile-drawer-backdrop" id="mobile-drawer-backdrop"></div>
+  
+  <div class="mobile-drawer-panel">
+    <div class="drawer-header">
+      <Logo />
+      <button id="close-mobile-menu" class="drawer-close-btn" aria-label="Close navigation menu">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <form action="/search/" method="get" class="drawer-search-form">
+      <input type="text" name="q" placeholder="Search fashion articles..." class="drawer-search-input" required />
+      <button type="submit" class="drawer-search-btn" aria-label="Search">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+    </form>
+
+    <!-- Navigation Accordion -->
+    <nav class="drawer-nav">
+      <ul class="drawer-nav-list">
+        {navigation.main.map(item => {
+          const hasChildren = item.subcategories && item.subcategories.length > 0;
+          return (
+            <li class="drawer-nav-item">
+              <div class="drawer-nav-row">
+                <a href={item.href} class="drawer-nav-link">{item.label}</a>
+                {hasChildren && (
+                  <button class="drawer-accordion-btn" aria-label={`Toggle ${item.label} subcategories`}>
+                    <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="2 2 6 6 10 2"></polyline>
+                    </svg>
+                  </button>
+                )}
+              </div>
+
+              {hasChildren && (
+                <ul class="drawer-sub-list">
+                  {item.subcategories.map(sub => (
+                    <li>
+                      <a href={`${item.href}${sub.slug}/`} class="drawer-sub-link">
+                        {sub.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+
+    <!-- Social & Info -->
+    <div class="drawer-footer">
+      <p class="drawer-footer-title">Follow TrendVesture</p>
+      <div class="drawer-social-icons">
+        <a href={siteConfig.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </a>
+        <a href={siteConfig.social.pinterest} target="_blank" rel="noopener noreferrer" aria-label="Pinterest">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </a>
+        <a href={siteConfig.social.twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mobile-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+  }
+
+  .mobile-drawer.open {
+    display: block;
+  }
+
+  .mobile-drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(2px);
+    animation: fadeIn var(--transition-fast) forwards;
+  }
+
+  .mobile-drawer-panel {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 320px;
+    max-width: 85vw;
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    box-shadow: var(--shadow-lg);
+    animation: slideRight var(--transition-normal) forwards;
+  }
+
+  @keyframes slideRight {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .drawer-close-btn {
+    background: transparent;
+    border: 0;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .drawer-search-form {
+    display: flex;
+    margin: 16px 20px;
+    position: relative;
+  }
+
+  .drawer-search-input {
+    width: 100%;
+    padding: 10px 40px 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-medium);
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+  }
+
+  .drawer-search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .drawer-search-btn {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .drawer-nav {
+    flex: 1;
+    padding: 0 20px;
+  }
+
+  .drawer-nav-list {
+    list-style: none;
+  }
+
+  .drawer-nav-item {
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .drawer-nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .drawer-nav-link {
+    display: block;
+    padding: 14px 0;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+
+  .drawer-nav-link:hover {
+    color: var(--accent);
+  }
+
+  .drawer-accordion-btn {
+    background: transparent;
+    border: none;
+    padding: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: transform var(--transition-fast);
+  }
+
+  .drawer-accordion-btn.expanded {
+    transform: rotate(180deg);
+  }
+
+  .drawer-sub-list {
+    display: none;
+    list-style: none;
+    padding-left: 14px;
+    padding-bottom: 12px;
+  }
+
+  .drawer-sub-list.visible {
+    display: block;
+  }
+
+  .drawer-sub-link {
+    display: block;
+    padding: 8px 0;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .drawer-sub-link:hover {
+    color: var(--accent);
+  }
+
+  .drawer-footer {
+    padding: 24px 20px;
+    border-top: 1px solid var(--border-light);
+    margin-top: auto;
+  }
+
+  .drawer-footer-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+
+  .drawer-social-icons {
+    display: flex;
+    gap: 16px;
+  }
+
+  .drawer-social-icons a {
+    color: var(--text-secondary);
+  }
+
+  .drawer-social-icons a:hover {
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  function setupDrawer() {
+    const drawer = document.getElementById('mobile-menu-drawer');
+    const backdrop = document.getElementById('mobile-drawer-backdrop');
+    const closeBtn = document.getElementById('close-mobile-menu');
+
+    function close() {
+      if (drawer) drawer.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    if (closeBtn) closeBtn.addEventListener('click', close);
+    if (backdrop) backdrop.addEventListener('click', close);
+
+    // Accordions
+    document.querySelectorAll('.drawer-accordion-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.drawer-nav-item');
+        const subList = item?.querySelector('.drawer-sub-list');
+        if (subList) {
+          subList.classList.toggle('visible');
+          btn.classList.toggle('expanded');
+        }
+      });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', setupDrawer);
+</script>

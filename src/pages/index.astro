@@ -1,0 +1,133 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import CategoryBlock from '../components/CategoryBlock.astro';
+import FullWidthHighlight from '../components/FullWidthHighlight.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getCollection } from 'astro:content';
+
+// Fetch all non-draft posts
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// Sort by date descending
+allPosts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+// Featured posts for Hero
+const featuredPosts = allPosts.filter(p => p.data.featured);
+const heroPosts = featuredPosts.length >= 5 ? featuredPosts.slice(0, 5) : allPosts.slice(0, 5);
+
+// Category slices
+const fashionTrendPosts = allPosts.filter(p => p.data.category === 'Fashion Trends');
+const footwearPosts = allPosts.filter(p => p.data.category === 'Footwear' || p.data.category === 'Accessories & Jewellery');
+const womensPosts = allPosts.filter(p => p.data.category === "Women's Fashion" || p.data.category === "Beauty & Makeup");
+const latestPosts = allPosts.slice(5, 13);
+---
+
+<BaseLayout>
+  <!-- 1. Hero 3-Column Section (Foxiz Section 1) -->
+  <HeroSection posts={heroPosts} />
+
+  <!-- 2. Category Block 1: Fashion Trends (Foxiz Section 3) -->
+  <CategoryBlock 
+    title="Fashion Trends & Runway" 
+    categorySlug="fashion-trends"
+    posts={fashionTrendPosts}
+    layout="grid-list"
+  />
+
+  <!-- 3. Full-Width Feature: Footwear & Accessories (Foxiz Section 4) -->
+  <FullWidthHighlight 
+    title="Footwear & Luxury Accents"
+    categorySlug="footwear"
+    subtitle="The definitive guide to sneaker drops, luxury leather goods, and statement footwear."
+    posts={footwearPosts}
+  />
+
+  <!-- 4. Category Block 2: Women's Fashion & Beauty (Foxiz Section 5 - Overlay Layout) -->
+  <CategoryBlock 
+    title="Women's Style & Editorial Beauty"
+    categorySlug="womens-fashion"
+    posts={womensPosts}
+    layout="overlay-list"
+  />
+
+  <!-- 5. Latest Stories with Sidebar (Foxiz Section 7) -->
+  <section class="latest-stories-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Latest Stories</h2>
+        <a href="/category/fashion-trends/" class="section-view-all">
+          <span>Explore Archives</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </a>
+      </div>
+
+      <div class="content-with-sidebar">
+        <!-- Main Feed (66%) -->
+        <div class="latest-feed-column">
+          <div class="latest-grid">
+            {latestPosts.map(post => (
+              <ArticleCard post={post} variant="grid" showExcerpt={true} />
+            ))}
+          </div>
+
+          <div class="view-more-cta-wrap">
+            <a href="/category/shopping-style-guides/" class="view-more-btn">
+              Browse More Editorial Guides
+            </a>
+          </div>
+        </div>
+
+        <!-- Right Sidebar (33%) -->
+        <Sidebar popularPosts={allPosts} authorId="tanisha" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .latest-stories-section {
+    padding: 48px 0 64px 0;
+  }
+
+  .latest-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+
+  .view-more-cta-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 48px;
+  }
+
+  .view-more-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 32px;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .view-more-btn:hover {
+    background: var(--accent);
+    color: #ffffff;
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    .latest-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

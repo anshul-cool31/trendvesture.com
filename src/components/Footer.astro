@@ -1,0 +1,221 @@
+---
+import Logo from './Logo.astro';
+import BackToTop from './BackToTop.astro';
+import { categories } from '../data/categories.js';
+import { authors } from '../data/authors.js';
+import { siteConfig } from '../data/site.js';
+import { navigation } from '../data/navigation.js';
+---
+
+<footer class="site-footer" id="site-footer">
+  <div class="container footer-main-inner">
+    <!-- Col 1: Brand & Editorial Mission -->
+    <div class="footer-col footer-col-brand">
+      <Logo variant="footer" />
+      <p class="footer-about-text">
+        {siteConfig.footer.about}
+      </p>
+      
+      <div class="footer-social-links">
+        <a href={siteConfig.social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+        </a>
+        <a href={siteConfig.social.pinterest} target="_blank" rel="noopener noreferrer" aria-label="Pinterest">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="2" x2="12" y2="22"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        </a>
+        <a href={siteConfig.social.twitter} target="_blank" rel="noopener noreferrer" aria-label="Twitter">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+        </a>
+        <a href={siteConfig.social.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Col 2: Fashion Categories -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">Editorial Sections</h4>
+      <ul class="footer-menu">
+        {categories.slice(0, 5).map(cat => (
+          <li>
+            <a href={`/category/${cat.slug}/`}>{cat.name}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <!-- Col 3: Lifestyle & Guides -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">Style & Living</h4>
+      <ul class="footer-menu">
+        {categories.slice(5).map(cat => (
+          <li>
+            <a href={`/category/${cat.slug}/`}>{cat.name}</a>
+          </li>
+        ))}
+        <li><a href="/category/fashion-trends/runway-trends/">Runway Analysis</a></li>
+        <li><a href="/category/womens-fashion/workwear/">Workwear Capsule</a></li>
+      </ul>
+    </div>
+
+    <!-- Col 4: Masthead & Authors -->
+    <div class="footer-col">
+      <h4 class="footer-col-title">Editorial Masthead</h4>
+      <ul class="footer-menu">
+        {authors.map(author => (
+          <li>
+            <a href={`/author/${author.slug}/`}>
+              <strong>{author.name}</strong> – {author.designation}
+            </a>
+          </li>
+        ))}
+        <li><a href="/about/">About Our Publication</a></li>
+        <li><a href="/contact/">Press & Editorial Inquiries</a></li>
+        <li><a href="/feed.xml">RSS Editorial Feed</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Bottom Legal Bar -->
+  <div class="footer-bottom-bar">
+    <div class="container footer-bottom-inner">
+      <p class="footer-copyright">{siteConfig.footer.copyright}</p>
+      
+      <div class="footer-legal-links">
+        {navigation.legal.map(item => (
+          <a href={item.href}>{item.label}</a>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <BackToTop />
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-light);
+    margin-top: auto;
+  }
+
+  .footer-main-inner {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    gap: 40px;
+    padding: 64px 20px 48px;
+  }
+
+  .footer-col-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer-about-text {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-top: 16px;
+    margin-bottom: 24px;
+    max-width: 320px;
+  }
+
+  .footer-social-links {
+    display: flex;
+    gap: 16px;
+  }
+
+  .footer-social-links a {
+    color: var(--text-secondary);
+    transition: color var(--transition-fast);
+  }
+
+  .footer-social-links a:hover {
+    color: var(--accent);
+  }
+
+  .footer-col-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    position: relative;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-medium);
+  }
+
+  .footer-col-title::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 24px;
+    height: 2px;
+    background-color: var(--accent);
+  }
+
+  .footer-menu {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-menu a {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .footer-menu a:hover {
+    color: var(--accent);
+  }
+
+  .footer-bottom-bar {
+    border-top: 1px solid var(--border-light);
+    padding: 20px 0;
+  }
+
+  .footer-bottom-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+
+  .footer-legal-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-legal-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  .footer-legal-links a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 960px) {
+    .footer-main-inner {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .footer-main-inner {
+      grid-template-columns: 1fr;
+    }
+    .footer-bottom-inner {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>

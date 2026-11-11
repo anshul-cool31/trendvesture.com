@@ -1,0 +1,304 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { siteConfig } from '../data/site.js';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Contact Us' }
+];
+---
+
+<BaseLayout
+  title="Contact TrendVesture | Editorial Desks & Press Relations"
+  description="Contact TrendVesture editors for press invitations, media kit inquiries, editorial submissions, and partnership opportunities."
+>
+  <div class="contact-page-wrap">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <header class="contact-hero">
+        <span class="contact-badge">Communications</span>
+        <h1 class="contact-title">Connect with TrendVesture</h1>
+        <p class="contact-lead">
+          We welcome editorial pitches, fashion week press releases, designer lookbook submissions, and reader inquiries.
+        </p>
+      </header>
+
+      <div class="contact-layout-grid">
+        <!-- Contact Form -->
+        <div class="contact-form-card">
+          <h2 class="contact-card-title">Send a Direct Message</h2>
+          <p class="contact-card-subtitle">Our editorial team reviews communications within 24 to 48 hours.</p>
+
+          <form class="contact-form" onsubmit="event.preventDefault(); document.getElementById('contact-status-msg').style.display='block'; this.reset();">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="name" placeholder="E.g. Chloe Laurent" required />
+              </div>
+              <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="chloe@example.com" required />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="subject">Department / Subject</label>
+              <select id="subject" name="subject">
+                <option value="editorial">Editorial Pitch / Article Inquiry</option>
+                <option value="press">Press Invitation / Fashion Week Access</option>
+                <option value="styling">Styling Question / Reader Query</option>
+                <option value="general">General Correspondence</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" rows="5" placeholder="Share your message or inquiry..." required></textarea>
+            </div>
+
+            <button type="submit" class="contact-submit-btn">
+              Send Editorial Message
+            </button>
+
+            <div id="contact-status-msg" class="contact-status-msg" style="display: none;">
+              ✓ Thank you for contacting TrendVesture. Your message has been received by our editorial desk.
+            </div>
+          </form>
+        </div>
+
+        <!-- Contact Information Details -->
+        <div class="contact-info-panel">
+          <div class="contact-info-block">
+            <h3>Editorial Headquarters</h3>
+            <p>{siteConfig.contact.address}</p>
+            <p>New York • Paris • Milan</p>
+          </div>
+
+          <div class="contact-info-block">
+            <h3>Direct Inquiries</h3>
+            <p><strong>Editorial Desk:</strong> <a href={`mailto:${siteConfig.contact.email}`}>{siteConfig.contact.email}</a></p>
+            <p><strong>Press Relations:</strong> <a href={`mailto:${siteConfig.contact.press}`}>{siteConfig.contact.press}</a></p>
+          </div>
+
+          <div class="contact-info-block">
+            <h3>Social Channels</h3>
+            <div class="contact-social-pills">
+              <a href={siteConfig.social.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
+              <a href={siteConfig.social.pinterest} target="_blank" rel="noopener noreferrer">Pinterest</a>
+              <a href={siteConfig.social.twitter} target="_blank" rel="noopener noreferrer">X (Twitter)</a>
+              <a href={siteConfig.social.youtube} target="_blank" rel="noopener noreferrer">YouTube</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .contact-page-wrap {
+    padding: 32px 0 64px;
+  }
+
+  .contact-hero {
+    text-align: center;
+    max-width: 760px;
+    margin: 0 auto 48px;
+  }
+
+  .contact-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .contact-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.2rem, 4vw, 3rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+  }
+
+  .contact-lead {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .contact-layout-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 48px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .contact-form-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    padding: 40px;
+  }
+
+  .contact-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .contact-card-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    padding: 12px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    transition: border-color var(--transition-fast);
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+
+  .contact-submit-btn {
+    display: inline-flex;
+    padding: 14px 28px;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .contact-submit-btn:hover {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  .contact-status-msg {
+    margin-top: 20px;
+    padding: 12px 16px;
+    background: rgba(46, 133, 64, 0.12);
+    color: #2e8540;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .contact-info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .contact-info-block {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    padding: 28px;
+  }
+
+  .contact-info-block h3 {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+  }
+
+  .contact-info-block p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+
+  .contact-info-block a {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .contact-social-pills {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+  }
+
+  .contact-social-pills a {
+    padding: 6px 14px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-full);
+    font-size: 0.8125rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .contact-social-pills a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  @media (max-width: 860px) {
+    .contact-layout-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 540px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+    .contact-form-card {
+      padding: 24px;
+    }
+  }
+</style>

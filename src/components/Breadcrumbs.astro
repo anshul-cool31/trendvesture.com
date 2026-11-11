@@ -1,0 +1,90 @@
+---
+interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": items.map((item, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "name": item.label,
+    "item": item.href ? new URL(item.href, 'https://trendvesture.com').toString() : undefined
+  }))
+};
+---
+
+<nav class="breadcrumbs-nav" aria-label="Breadcrumb">
+  <ol class="breadcrumbs-list">
+    {items.map((item, index) => {
+      const isLast = index === items.length - 1;
+      return (
+        <li class={`breadcrumb-item ${isLast ? 'is-current' : ''}`}>
+          {isLast || !item.href ? (
+            <span aria-current={isLast ? "page" : undefined}>{item.label}</span>
+          ) : (
+            <a href={item.href} class="breadcrumb-link">{item.label}</a>
+          )}
+          {!isLast && (
+            <span class="breadcrumb-separator" aria-hidden="true">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </span>
+          )}
+        </li>
+      );
+    })}
+  </ol>
+</nav>
+
+<script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+<style>
+  .breadcrumbs-nav {
+    margin-bottom: 24px;
+    font-size: 0.8125rem;
+  }
+
+  .breadcrumbs-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    list-style: none;
+    gap: 8px;
+    color: var(--text-muted);
+  }
+
+  .breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .breadcrumb-link {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .breadcrumb-link:hover {
+    color: var(--accent);
+  }
+
+  .breadcrumb-item.is-current span {
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+
+  .breadcrumb-separator {
+    display: flex;
+    align-items: center;
+    opacity: 0.4;
+  }
+</style>

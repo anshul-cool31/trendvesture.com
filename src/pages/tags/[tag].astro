@@ -1,0 +1,49 @@
+---
+import { getCollection } from 'astro:content';
+import ArchiveLayout from '../../layouts/ArchiveLayout.astro';
+import { slugify } from '../../utils/categories.js';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  posts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+  // Collect all unique tags
+  const tagsMap = new Map();
+
+  posts.forEach(post => {
+    (post.data.tags || []).forEach(tag => {
+      const slug = slugify(tag);
+      if (!tagsMap.has(slug)) {
+        tagsMap.set(slug, { name: tag, posts: [] });
+      }
+      tagsMap.get(slug).posts.push(post);
+    });
+  });
+
+  return Array.from(tagsMap.entries()).map(([slug, { name, posts: tagPosts }]) => ({
+    params: { tag: slug },
+    props: {
+      tagName: name,
+      posts: tagPosts,
+      allPosts: posts
+    }
+  }));
+}
+
+const { tagName, posts, allPosts } = Astro.props;
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Tags' },
+  { label: `#${tagName}` }
+];
+---
+
+<ArchiveLayout
+  title={`Tag: #${tagName}`}
+  description={`Browse curated fashion articles, styling edits, and trend reports tagged under #${tagName} on TrendVesture.`}
+  breadcrumbs={breadcrumbs}
+  posts={posts}
+  allPosts={allPosts}
+  baseUrl={`/tags/${slugify(tagName)}/`}
+/>

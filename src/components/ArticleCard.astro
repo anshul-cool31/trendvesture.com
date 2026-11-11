@@ -1,0 +1,112 @@
+---
+import { slugify } from '../utils/categories.js';
+
+interface Props {
+  post: {
+    slug: string;
+    data: {
+      title: string;
+      description?: string;
+      category: string;
+      subcategory?: string;
+      author: string;
+      pubDate: Date;
+      heroImage: string;
+      heroImageAlt?: string;
+      postFormat?: string;
+    };
+  };
+  variant?: 'hero' | 'small' | 'grid' | 'horizontal' | 'overlay';
+  showExcerpt?: boolean;
+}
+
+const { post, variant = 'grid', showExcerpt = false } = Astro.props;
+
+const categorySlug = slugify(post.data.category);
+const authorSlug = slugify(post.data.author);
+const formattedDate = new Date(post.data.pubDate).toLocaleDateString('en-US', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric'
+});
+---
+
+<article class={`article-card card-variant-${variant}`}>
+  <div class="card-thumb-wrap img-zoom-holder">
+    <a href={`/posts/${post.slug}/`} aria-label={post.data.title}>
+      <img 
+        src={post.data.heroImage} 
+        alt={post.data.heroImageAlt || post.data.title}
+        loading={variant === 'hero' ? 'eager' : 'lazy'}
+        decoding="async"
+      />
+    </a>
+
+    {post.data.postFormat && post.data.postFormat !== 'standard' && (
+      <span class="format-badge" title={`${post.data.postFormat} format`}>
+        {post.data.postFormat === 'gallery' && (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        )}
+        {post.data.postFormat === 'video' && (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        )}
+        {post.data.postFormat === 'audio' && (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path></svg>
+        )}
+        {post.data.postFormat === 'quote' && (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.75-2-2-2H4c-1.25 0-2 .75-2 2v6c0 1.25.75 2 2 2h3c0 4-2 6-4 8v0z"></path></svg>
+        )}
+        {post.data.postFormat === 'image' && (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
+        )}
+        {post.data.postFormat === 'link' && (
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+        )}
+      </span>
+    )}
+  </div>
+
+  <div class="card-body">
+    <a href={`/category/${categorySlug}/`} class="card-category">
+      {post.data.category}
+    </a>
+
+    <h3 class="card-title">
+      <a href={`/posts/${post.slug}/`}>
+        {post.data.title}
+      </a>
+    </h3>
+
+    {showExcerpt && post.data.description && (
+      <p class="card-excerpt">{post.data.description}</p>
+    )}
+
+    <div class="card-meta">
+      <a href={`/author/${authorSlug}/`}>By {post.data.author}</a>
+      <span class="meta-dot">•</span>
+      <time datetime={post.data.pubDate.toISOString()}>{formattedDate}</time>
+    </div>
+  </div>
+</article>
+
+<style>
+  .format-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 26px;
+    height: 26px;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(4px);
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+
+  .meta-dot {
+    opacity: 0.5;
+  }
+</style>

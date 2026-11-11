@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import ArchiveLayout from '../../layouts/ArchiveLayout.astro';
+import { authors } from '../../data/authors.js';
+import { slugify } from '../../utils/categories.js';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  posts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+  return authors.map(author => {
+    const authorPosts = posts.filter(p => slugify(p.data.author) === author.slug);
+    return {
+      params: { author: author.slug },
+      props: {
+        author,
+        posts: authorPosts,
+        allPosts: posts
+      }
+    };
+  });
+}
+
+const { author, posts, allPosts } = Astro.props;
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Editorial Masthead', href: '/about/' },
+  { label: author.name }
+];
+---
+
+<ArchiveLayout
+  title={`${author.name} | Fashion Editor & Writer`}
+  description={author.bio}
+  breadcrumbs={breadcrumbs}
+  posts={posts}
+  allPosts={allPosts}
+  baseUrl={`/author/${author.slug}/`}
+  authorData={author}
+/>

@@ -1,0 +1,161 @@
+---
+import { navigation } from '../data/navigation.js';
+
+const pathname = new URL(Astro.request.url).pathname;
+---
+
+<nav class="main-nav" aria-label="Primary Navigation">
+  <ul class="nav-list">
+    {navigation.main.map(item => {
+      const isActive = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+      const hasChildren = item.subcategories && item.subcategories.length > 0;
+      
+      return (
+        <li class={`nav-item ${hasChildren ? 'has-dropdown' : ''} ${isActive ? 'active' : ''}`}>
+          <a href={item.href} class="nav-link">
+            <span>{item.label}</span>
+            {hasChildren && (
+              <svg class="dropdown-chevron" width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 1L5 5L9 1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            )}
+          </a>
+
+          {hasChildren && (
+            <ul class="dropdown-menu">
+              {item.subcategories.map(sub => (
+                <li class="dropdown-item">
+                  <a href={`${item.href}${sub.slug}/`} class="dropdown-link">
+                    {sub.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+</nav>
+
+<style>
+  .main-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .nav-list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 28px;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-item {
+    position: relative;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 0;
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    text-decoration: none;
+    position: relative;
+    transition: color var(--transition-fast);
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--accent);
+    transition: width var(--transition-fast);
+  }
+
+  .nav-item:hover .nav-link,
+  .nav-item.active .nav-link {
+    color: var(--accent);
+  }
+
+  .nav-item:hover .nav-link::after,
+  .nav-item.active .nav-link::after {
+    width: 100%;
+  }
+
+  .dropdown-chevron {
+    transition: transform var(--transition-fast);
+  }
+
+  .nav-item:hover .dropdown-chevron {
+    transform: rotate(180deg);
+  }
+
+  /* Dropdown Menu */
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%) translateY(8px);
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    min-width: 220px;
+    padding: 8px 0;
+    list-style: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-fast);
+    z-index: 100;
+  }
+
+  .nav-item:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  .dropdown-link {
+    display: block;
+    padding: 10px 20px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .dropdown-link:hover {
+    color: var(--accent);
+    background-color: var(--bg-surface);
+    padding-left: 24px;
+  }
+
+  @media (max-width: 1080px) {
+    .nav-list {
+      gap: 18px;
+    }
+    .nav-link {
+      font-size: 0.8rem;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .main-nav {
+      display: none;
+    }
+  }
+</style>

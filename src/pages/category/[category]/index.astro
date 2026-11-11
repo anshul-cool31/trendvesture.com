@@ -1,0 +1,41 @@
+---
+import { getCollection } from 'astro:content';
+import ArchiveLayout from '../../../layouts/ArchiveLayout.astro';
+import { categories } from '../../../data/categories.js';
+import { slugify } from '../../../utils/categories.js';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  posts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+  return categories.map(cat => {
+    const categoryPosts = posts.filter(p => slugify(p.data.category) === cat.slug);
+    return {
+      params: { category: cat.slug },
+      props: {
+        category: cat,
+        posts: categoryPosts,
+        allPosts: posts
+      }
+    };
+  });
+}
+
+const { category, posts, allPosts } = Astro.props;
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: category.name }
+];
+---
+
+<ArchiveLayout
+  title={category.name}
+  description={category.description}
+  breadcrumbs={breadcrumbs}
+  subcategories={category.subcategories}
+  categoryBaseUrl={`/category/${category.slug}/`}
+  posts={posts}
+  allPosts={allPosts}
+  baseUrl={`/category/${category.slug}/`}
+/>

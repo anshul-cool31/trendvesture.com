@@ -1,0 +1,64 @@
+---
+import { siteConfig } from '../data/site.js';
+
+interface Props {
+  variant?: 'header' | 'footer';
+}
+
+const { variant = 'header' } = Astro.props;
+---
+
+<a href="/" class={`site-logo site-logo-${variant}`} aria-label={siteConfig.name}>
+  <span class="site-logo-text">{siteConfig.logoText}</span>
+  <span class="site-logo-tagline">{siteConfig.tagline}</span>
+</a>
+
+<style>
+  .site-logo {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    user-select: none;
+  }
+
+  .site-logo-text {
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    line-height: 1;
+    color: var(--text-primary);
+    text-transform: uppercase;
+    transition: opacity var(--transition-fast);
+  }
+
+  .site-logo-tagline {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  .site-logo-footer .site-logo-text {
+    font-size: 1.75rem;
+  }
+
+  .site-logo:hover .site-logo-text {
+    opacity: 0.82;
+  }
+
+  @media (max-width: 768px) {
+    .site-logo-text {
+      font-size: 1.65rem;
+      letter-spacing: 0.1em;
+    }
+    .site-logo-tagline {
+      font-size: 0.58rem;
+      letter-spacing: 0.18em;
+    }
+  }
+</style>

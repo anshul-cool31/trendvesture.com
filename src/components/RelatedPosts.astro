@@ -1,0 +1,42 @@
+---
+import ArticleCard from './ArticleCard.astro';
+
+interface Props {
+  posts: Array<any>;
+}
+
+const { posts } = Astro.props;
+if (!posts || posts.length === 0) return null;
+---
+
+<section class="related-posts-section">
+  <div class="section-header">
+    <h3 class="section-title">Related Stories</h3>
+  </div>
+
+  <div class="related-posts-grid">
+    {posts.map(post => (
+      <ArticleCard post={post} variant="grid" />
+    ))}
+  </div>
+</section>
+
+<style>
+  .related-posts-section {
+    margin-top: 56px;
+    padding-top: 36px;
+    border-top: 1px solid var(--border-light);
+  }
+
+  .related-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 860px) {
+    .related-posts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

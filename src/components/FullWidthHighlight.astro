@@ -1,0 +1,89 @@
+---
+import ArticleCard from './ArticleCard.astro';
+import { slugify } from '../utils/categories.js';
+
+interface Props {
+  title: string;
+  categorySlug?: string;
+  subtitle?: string;
+  posts: Array<any>;
+}
+
+const { title, categorySlug = slugify(title), subtitle, posts } = Astro.props;
+const displayPosts = posts.slice(0, 4);
+---
+
+<section class="fullwidth-highlight-section">
+  <div class="container">
+    <div class="highlight-header">
+      <div>
+        <h2 class="section-title highlight-title">{title}</h2>
+        {subtitle && <p class="highlight-subtitle">{subtitle}</p>}
+      </div>
+      <a href={`/category/${categorySlug}/`} class="section-view-all">
+        <span>View Full Collection</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </a>
+    </div>
+
+    <div class="highlight-grid">
+      {displayPosts.map(post => (
+        <ArticleCard post={post} variant="grid" />
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .fullwidth-highlight-section {
+    padding: 56px 0;
+    background: var(--bg-surface);
+    border-top: 1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
+    margin: 40px 0;
+  }
+
+  .highlight-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-medium);
+    position: relative;
+  }
+
+  .highlight-header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background-color: var(--accent);
+  }
+
+  .highlight-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 1024px) {
+    .highlight-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 600px) {
+    .highlight-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

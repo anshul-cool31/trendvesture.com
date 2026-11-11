@@ -1,0 +1,97 @@
+---
+interface Props {
+  currentPage: number;
+  totalPages: number;
+  baseUrl: string;
+}
+
+const { currentPage, totalPages, baseUrl } = Astro.props;
+if (totalPages <= 1) return null;
+
+const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+---
+
+<nav class="pagination-nav" aria-label="Pagination Navigation">
+  <div class="pagination-list">
+    {currentPage > 1 && (
+      <a 
+        href={currentPage === 2 ? baseUrl : `${baseUrl}?page=${currentPage - 1}`} 
+        class="pagination-btn pagination-prev"
+        aria-label="Previous Page"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <span>Previous</span>
+      </a>
+    )}
+
+    {pages.map(p => {
+      const isCurrent = p === currentPage;
+      const url = p === 1 ? baseUrl : `${baseUrl}?page=${p}`;
+      return (
+        <a 
+          href={url} 
+          class={`pagination-number ${isCurrent ? 'is-current' : ''}`}
+          aria-current={isCurrent ? "page" : undefined}
+        >
+          {p}
+        </a>
+      );
+    })}
+
+    {currentPage < totalPages && (
+      <a 
+        href={`${baseUrl}?page=${currentPage + 1}`} 
+        class="pagination-btn pagination-next"
+        aria-label="Next Page"
+      >
+        <span>Next</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </a>
+    )}
+  </div>
+</nav>
+
+<style>
+  .pagination-nav {
+    display: flex;
+    justify-content: center;
+    margin: 48px 0;
+  }
+
+  .pagination-list {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pagination-number,
+  .pagination-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 40px;
+    min-width: 40px;
+    padding: 0 14px;
+    border-radius: var(--radius-sm);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .pagination-number:hover,
+  .pagination-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .pagination-number.is-current {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #ffffff;
+  }
+</style>

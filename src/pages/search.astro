@@ -1,0 +1,258 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { getCollection } from 'astro:content';
+import Sidebar from '../components/Sidebar.astro';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+allPosts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Search' }
+];
+---
+
+<BaseLayout 
+  title="Search Articles & Trend Forecasts"
+  description="Search across TrendVesture for fashion runway forecasts, outfit styling guides, luxury accessories, footwear, and beauty routines."
+>
+  <div class="search-page-wrap">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <header class="search-page-header">
+        <h1 class="search-page-title">Search TrendVesture</h1>
+        <p class="search-page-subtitle">Discover fashion trends, runway reviews, styling manuals, and beauty rituals.</p>
+
+        <form id="page-search-form" class="page-search-box" action="/search/" method="get">
+          <input 
+            type="search" 
+            id="page-search-input" 
+            name="q"
+            placeholder="Type your search (e.g. tailoring, sneakers, capsule wardrobe)..." 
+            autocomplete="off"
+            required
+          />
+          <button type="submit" class="page-search-submit-btn">
+            Search
+          </button>
+        </form>
+      </header>
+
+      <div class="content-with-sidebar">
+        <!-- Results Column -->
+        <div class="search-results-column">
+          <div id="search-status-bar" class="search-status-bar">
+            <span>Loading search database...</span>
+          </div>
+
+          <div id="search-results-grid" class="search-articles-grid">
+            <!-- Populated via client-side search script -->
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <Sidebar popularPosts={allPosts} />
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .search-page-wrap {
+    padding: 32px 0 64px;
+  }
+
+  .search-page-header {
+    text-align: center;
+    max-width: 780px;
+    margin: 0 auto 48px;
+  }
+
+  .search-page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 3.5vw, 2.75rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+
+  .search-page-subtitle {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+
+  .page-search-box {
+    display: flex;
+    gap: 10px;
+    background: var(--bg-card);
+    border: 2px solid var(--border-medium);
+    border-radius: var(--radius-full);
+    padding: 6px 8px 6px 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .page-search-box:focus-within {
+    border-color: var(--accent);
+  }
+
+  #page-search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    color: var(--text-primary);
+  }
+
+  #page-search-input:focus {
+    outline: none;
+  }
+
+  .page-search-submit-btn {
+    padding: 10px 24px;
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    border: none;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .page-search-submit-btn:hover {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  .search-status-bar {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .search-articles-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+  }
+
+  @media (max-width: 768px) {
+    .search-articles-grid {
+      grid-template-columns: 1fr;
+    }
+    .page-search-box {
+      flex-direction: column;
+      border-radius: var(--radius-md);
+      padding: 12px;
+    }
+  }
+</style>
+
+<script>
+  let indexData = null;
+
+  async function performSearch() {
+    const input = document.getElementById('page-search-input');
+    const statusBar = document.getElementById('search-status-bar');
+    const resultsGrid = document.getElementById('search-results-grid');
+    const form = document.getElementById('page-search-form');
+
+    if (!input || !statusBar || !resultsGrid) return;
+
+    // Read URL query parameter
+    const params = new URLSearchParams(window.location.search);
+    const initialQuery = params.get('q') || '';
+    if (initialQuery) {
+      input.value = initialQuery;
+    }
+
+    try {
+      const res = await fetch('/search-index.json');
+      indexData = await res.json();
+    } catch (e) {
+      statusBar.innerHTML = '<span style="color: red;">Failed to load search data.</span>';
+      return;
+    }
+
+    function runQuery(q) {
+      const query = q.trim().toLowerCase();
+      if (!query) {
+        statusBar.textContent = 'Showing all recent articles:';
+        renderResults(indexData.slice(0, 10));
+        return;
+      }
+
+      const matches = indexData.filter(item => {
+        return item.title.toLowerCase().includes(query) ||
+               item.description.toLowerCase().includes(query) ||
+               item.category.toLowerCase().includes(query) ||
+               item.subcategory.toLowerCase().includes(query) ||
+               item.author.toLowerCase().includes(query) ||
+               item.tags.some(t => t.toLowerCase().includes(query));
+      });
+
+      statusBar.innerHTML = `Found <strong>${matches.length}</strong> results for "<strong>${q}</strong>"`;
+      renderResults(matches);
+    }
+
+    function renderResults(items) {
+      if (items.length === 0) {
+        resultsGrid.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: var(--bg-surface); border-radius: 8px;">
+            <p style="font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--text-primary);">No Results Found</p>
+            <p style="color: var(--text-muted); margin-top: 8px;">We couldn't find anything matching your search. Try different keywords.</p>
+          </div>
+        `;
+        return;
+      }
+
+      resultsGrid.innerHTML = items.map(item => `
+        <article class="article-card card-variant-grid">
+          <div class="card-thumb-wrap img-zoom-holder">
+            <a href="/posts/${item.slug}/">
+              <img src="${item.heroImage}" alt="${item.title}" loading="lazy" />
+            </a>
+          </div>
+          <div class="card-body">
+            <span class="card-category">${item.category}</span>
+            <h3 class="card-title">
+              <a href="/posts/${item.slug}/">${item.title}</a>
+            </h3>
+            <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.5;">${item.description}</p>
+            <div class="card-meta">
+              <span>By ${item.author}</span>
+              <span>•</span>
+              <time>${item.pubDate}</time>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    // Run on initial load
+    runQuery(input.value);
+
+    // Live update on input
+    input.addEventListener('input', () => {
+      runQuery(input.value);
+    });
+
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const url = new URL(window.location);
+        url.searchParams.set('q', input.value);
+        window.history.pushState({}, '', url);
+        runQuery(input.value);
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', performSearch);
+</script>

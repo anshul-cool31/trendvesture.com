@@ -1,0 +1,67 @@
+---
+import { slugify } from '../utils/categories.js';
+
+interface Props {
+  posts: Array<any>;
+}
+
+const { posts } = Astro.props;
+const popularPosts = posts.slice(0, 5);
+---
+
+<div class="sidebar-widget popular-sidebar-widget">
+  <h3 class="sidebar-widget-title">Trending Stories</h3>
+
+  <div class="trending-numbered-list">
+    {popularPosts.map((post, index) => {
+      const num = String(index + 1).padStart(2, '0');
+      const categorySlug = slugify(post.data.category);
+      const authorSlug = slugify(post.data.author);
+      const formattedDate = new Date(post.data.pubDate).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric'
+      });
+
+      return (
+        <article class="trending-item">
+          <span class="trending-number">{num}</span>
+          <div class="trending-item-content">
+            <a href={`/category/${categorySlug}/`} class="trending-category">
+              {post.data.category}
+            </a>
+            <h4 class="trending-item-title">
+              <a href={`/posts/${post.slug}/`}>
+                {post.data.title}
+              </a>
+            </h4>
+            <div class="trending-item-meta">
+              <span>{post.data.author}</span>
+              <span>•</span>
+              <time>{formattedDate}</time>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+</div>
+
+<style>
+  .trending-category {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+
+  .trending-item-meta {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+</style>

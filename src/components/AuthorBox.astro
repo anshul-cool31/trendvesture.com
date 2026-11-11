@@ -1,0 +1,76 @@
+---
+import { getAuthorByName } from '../data/authors.js';
+
+interface Props {
+  authorName: string;
+}
+
+const { authorName } = Astro.props;
+const author = getAuthorByName(authorName);
+if (!author) return null;
+---
+
+<div class="author-box">
+  <img src={author.avatar} alt={author.name} class="author-box-avatar" />
+  <div class="author-box-content">
+    <div class="author-box-header">
+      <div>
+        <h4 class="author-box-name">
+          <a href={`/author/${author.slug}/`}>{author.name}</a>
+        </h4>
+        <div class="author-box-designation">{author.designation}</div>
+      </div>
+      <a href={`/author/${author.slug}/`} class="author-all-posts-btn">
+        All Articles
+      </a>
+    </div>
+
+    <p class="author-box-bio">{author.bio}</p>
+
+    <div class="author-box-links">
+      {author.social.instagram && (
+        <a href={author.social.instagram} target="_blank" rel="noopener noreferrer">Instagram</a>
+      )}
+      {author.social.twitter && (
+        <a href={author.social.twitter} target="_blank" rel="noopener noreferrer">X (Twitter)</a>
+      )}
+      {author.social.pinterest && (
+        <a href={author.social.pinterest} target="_blank" rel="noopener noreferrer">Pinterest</a>
+      )}
+      {author.social.linkedin && (
+        <a href={author.social.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      )}
+    </div>
+  </div>
+</div>
+
+<style>
+  .author-box-content {
+    flex: 1;
+  }
+
+  .author-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .author-all-posts-btn {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid var(--accent);
+    padding: 4px 12px;
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+  }
+
+  .author-all-posts-btn:hover {
+    background: var(--accent);
+    color: #ffffff;
+  }
+</style>

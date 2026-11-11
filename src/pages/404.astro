@@ -1,0 +1,149 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+allPosts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+const recommendedPosts = allPosts.slice(0, 3);
+---
+
+<BaseLayout
+  title="Page Not Found – 404"
+  description="The editorial fashion story or category you are looking for has moved or is no longer available on TrendVesture."
+>
+  <div class="not-found-page">
+    <div class="container not-found-inner">
+      <span class="not-found-badge">Error 404</span>
+      <h1 class="not-found-title">Sartorial Destination Not Found</h1>
+      <p class="not-found-text">
+        The runway looks, styling manual, or editorial feature you requested seems to have moved or had its URL updated.
+      </p>
+
+      <div class="not-found-actions">
+        <a href="/" class="not-found-btn primary">
+          Return to TrendVesture Home
+        </a>
+        <a href="/category/fashion-trends/" class="not-found-btn secondary">
+          Explore Latest Trends
+        </a>
+      </div>
+
+      <!-- Recommended Articles -->
+      <div class="not-found-recommendations">
+        <h2 class="recommendations-title">Recommended Editorial Stories</h2>
+        <div class="recommendations-grid">
+          {recommendedPosts.map(post => (
+            <ArticleCard post={post} variant="grid" />
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found-page {
+    padding: 64px 0 96px;
+    text-align: center;
+  }
+
+  .not-found-inner {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .not-found-badge {
+    font-size: 0.8125rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    display: inline-block;
+    margin-bottom: 12px;
+  }
+
+  .not-found-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.4rem, 4.5vw, 3.5rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+  }
+
+  .not-found-text {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto 36px;
+  }
+
+  .not-found-actions {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 72px;
+    flex-wrap: wrap;
+  }
+
+  .not-found-btn {
+    display: inline-flex;
+    padding: 14px 28px;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .not-found-btn.primary {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+  }
+
+  .not-found-btn.primary:hover {
+    background: var(--accent);
+    color: #ffffff;
+  }
+
+  .not-found-btn.secondary {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    border: 1px solid var(--border-medium);
+  }
+
+  .not-found-btn.secondary:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .not-found-recommendations {
+    border-top: 1px solid var(--border-medium);
+    padding-top: 48px;
+    text-align: left;
+  }
+
+  .recommendations-title {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .recommendations-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

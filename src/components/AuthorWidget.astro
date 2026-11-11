@@ -1,0 +1,96 @@
+---
+import { authors } from '../data/authors.js';
+
+interface Props {
+  authorId?: 'tanisha' | 'shivam';
+}
+
+const { authorId = 'tanisha' } = Astro.props;
+const author = authors.find(a => a.id === authorId) || authors[0];
+---
+
+<div class="sidebar-widget author-sidebar-widget">
+  <h3 class="sidebar-widget-title">Editor Spotlight</h3>
+  
+  <div class="author-widget-body">
+    <div class="author-widget-avatar-wrap">
+      <img src={author.avatar} alt={author.name} class="author-widget-avatar" />
+    </div>
+
+    <h4 class="author-widget-name">{author.name}</h4>
+    <p class="author-widget-role">{author.designation}</p>
+    <p class="author-widget-bio">{author.bio.slice(0, 140)}...</p>
+
+    <a href={`/author/${author.slug}/`} class="author-widget-btn">
+      View Articles & Bio
+    </a>
+  </div>
+</div>
+
+<style>
+  .author-widget-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .author-widget-avatar-wrap {
+    width: 84px;
+    height: 84px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-bottom: 14px;
+    border: 3px solid var(--bg-card);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .author-widget-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .author-widget-name {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+
+  .author-widget-role {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .author-widget-bio {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .author-widget-btn {
+    display: inline-block;
+    padding: 8px 18px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-full);
+    transition: all var(--transition-fast);
+  }
+
+  .author-widget-btn:hover {
+    background: var(--text-primary);
+    color: var(--bg-primary);
+  }
+</style>

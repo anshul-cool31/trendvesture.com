@@ -1,0 +1,293 @@
+---
+---
+
+<div id="search-modal" class="search-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="search-modal-backdrop" id="search-modal-backdrop"></div>
+  
+  <div class="search-modal-container">
+    <div class="search-modal-header">
+      <div class="search-input-wrapper">
+        <svg class="search-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input 
+          type="search" 
+          id="search-modal-input" 
+          placeholder="Search runway trends, luxury handbags, styling guides..." 
+          autocomplete="off"
+        />
+      </div>
+      <button id="search-modal-close" class="search-close-btn" aria-label="Close search">
+        <kbd>ESC</kbd>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Quick Category Pills -->
+    <div class="search-quick-tags">
+      <span class="quick-tag-label">Popular Topics:</span>
+      <a href="/category/fashion-trends/" class="quick-tag-pill">Runway Trends</a>
+      <a href="/category/womens-fashion/" class="quick-tag-pill">Capsule Wardrobe</a>
+      <a href="/category/mens-fashion/" class="quick-tag-pill">Streetwear</a>
+      <a href="/category/footwear/" class="quick-tag-pill">Sneakers</a>
+      <a href="/category/beauty-makeup/" class="quick-tag-pill">Skincare</a>
+    </div>
+
+    <!-- Search Results Container -->
+    <div id="search-results-list" class="search-results-list">
+      <p class="search-hint">Type above to search across all TrendVesture articles...</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .search-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 80px;
+  }
+
+  .search-modal.open {
+    display: flex;
+  }
+
+  .search-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    animation: fadeIn var(--transition-fast) forwards;
+  }
+
+  .search-modal-container {
+    position: relative;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 20px;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-medium);
+    overflow: hidden;
+    animation: scaleUp var(--transition-normal) forwards;
+    z-index: 10;
+  }
+
+  .search-modal-header {
+    display: flex;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .search-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+  }
+
+  .search-icon {
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  #search-modal-input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-size: 1.15rem;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+  }
+
+  #search-modal-input:focus {
+    outline: none;
+  }
+
+  .search-close-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 6px;
+  }
+
+  .search-close-btn kbd {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-medium);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+  }
+
+  .search-close-btn:hover {
+    color: var(--text-primary);
+  }
+
+  .search-quick-tags {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-light);
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+  }
+
+  .quick-tag-label {
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .quick-tag-pill {
+    padding: 4px 10px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-full);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-fast);
+  }
+
+  .quick-tag-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .search-results-list {
+    max-height: 480px;
+    overflow-y: auto;
+    padding: 20px 24px;
+  }
+
+  .search-hint {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    padding: 30px 0;
+  }
+</style>
+
+<script>
+  let searchIndex = null;
+
+  async function loadSearchIndex() {
+    if (!searchIndex) {
+      try {
+        const res = await fetch('/search-index.json');
+        searchIndex = await res.json();
+      } catch (e) {
+        console.error('Could not load search index', e);
+      }
+    }
+  }
+
+  function setupSearchModal() {
+    const modal = document.getElementById('search-modal');
+    const input = document.getElementById('search-modal-input');
+    const closeBtn = document.getElementById('search-modal-close');
+    const backdrop = document.getElementById('search-modal-backdrop');
+    const resultsContainer = document.getElementById('search-results-list');
+
+    function openModal() {
+      if (modal) {
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        loadSearchIndex();
+        setTimeout(() => input && input.focus(), 50);
+      }
+    }
+
+    function closeModal() {
+      if (modal) {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+
+    // Triggers
+    document.querySelectorAll('.open-search-modal').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openModal();
+      });
+    });
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal?.classList.contains('open')) {
+        closeModal();
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        if (modal?.classList.contains('open')) {
+          closeModal();
+        } else {
+          openModal();
+        }
+      }
+    });
+
+    if (input) {
+      input.addEventListener('input', () => {
+        const query = input.value.trim().toLowerCase();
+        if (!query) {
+          resultsContainer.innerHTML = '<p class="search-hint">Type above to search across all TrendVesture articles...</p>';
+          return;
+        }
+
+        if (!searchIndex) return;
+
+        const results = searchIndex.filter(item => {
+          return item.title.toLowerCase().includes(query) ||
+                 item.description.toLowerCase().includes(query) ||
+                 item.category.toLowerCase().includes(query) ||
+                 item.subcategory.toLowerCase().includes(query) ||
+                 item.author.toLowerCase().includes(query) ||
+                 item.tags.some(t => t.toLowerCase().includes(query));
+        });
+
+        if (results.length === 0) {
+          resultsContainer.innerHTML = `
+            <div style="text-align: center; padding: 40px 0;">
+              <p style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">No articles found matching "${query}"</p>
+              <p style="font-size: 0.875rem; color: var(--text-muted); margin-top: 6px;">Try adjusting your keywords or browse our categories.</p>
+            </div>
+          `;
+          return;
+        }
+
+        resultsContainer.innerHTML = results.map(item => `
+          <a href="/posts/${item.slug}/" style="display: flex; gap: 16px; align-items: center; padding: 12px; border-radius: 6px; text-decoration: none; margin-bottom: 8px; transition: background 0.2s;" onmouseover="this.style.background='var(--bg-surface)'" onmouseout="this.style.background='transparent'">
+            <img src="${item.heroImage}" alt="${item.title}" style="width: 72px; height: 54px; object-fit: cover; border-radius: 4px; flex-shrink: 0;" />
+            <div style="flex: 1;">
+              <div style="font-size: 0.72rem; font-weight: 700; color: var(--accent); text-transform: uppercase;">${item.category}</div>
+              <div style="font-family: var(--font-serif); font-size: 0.95rem; font-weight: 700; color: var(--text-primary); line-height: 1.35; margin-top: 2px;">${item.title}</div>
+              <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">By ${item.author} • ${item.pubDate}</div>
+            </div>
+          </a>
+        `).join('');
+      });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', setupSearchModal);
+</script>

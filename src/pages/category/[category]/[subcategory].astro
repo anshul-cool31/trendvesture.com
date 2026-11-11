@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import ArchiveLayout from '../../../layouts/ArchiveLayout.astro';
+import { categories } from '../../../data/categories.js';
+import { slugify } from '../../../utils/categories.js';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  posts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+  const paths = [];
+
+  for (const cat of categories) {
+    for (const sub of cat.subcategories) {
+      // Find matching posts for this subcategory
+      const subPosts = posts.filter(p => {
+        return slugify(p.data.category) === cat.slug && 
+               slugify(p.data.subcategory) === sub.slug;
+      });
+
+      paths.push({
+        params: { 
+          category: cat.slug, 
+          subcategory: sub.slug 
+        },
+        props: {
+          category: cat,
+          subcategory: sub,
+          posts: subPosts.length > 0 ? subPosts : posts.filter(p => slugify(p.data.category) === cat.slug).slice(0, 3),
+          allPosts: posts
+        }
+      });
+    }
+  }
+
+  return paths;
+}
+
+const { category, subcategory, posts, allPosts } = Astro.props;
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: category.name, href: `/category/${category.slug}/` },
+  { label: subcategory.name }
+];
+---
+
+<ArchiveLayout
+  title={`${subcategory.name} – ${category.name}`}
+  description={subcategory.description || `Explore ${subcategory.name} articles and editorial advice from TrendVesture.`}
+  breadcrumbs={breadcrumbs}
+  subcategories={category.subcategories}
+  activeSubcategory={subcategory.slug}
+  categoryBaseUrl={`/category/${category.slug}/`}
+  posts={posts}
+  allPosts={allPosts}
+  baseUrl={`/category/${category.slug}/${subcategory.slug}/`}
+/>

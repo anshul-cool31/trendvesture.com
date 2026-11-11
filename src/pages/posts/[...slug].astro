@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getRelatedPosts } from '../../utils/related-posts.js';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  posts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
+
+  return posts.map((post, index) => {
+    // Determine post slug without directory prefix if present
+    const cleanSlug = post.slug.includes('/') ? post.slug.split('/').pop() : post.slug;
+    
+    return {
+      params: { slug: cleanSlug },
+      props: {
+        post,
+        allPosts: posts,
+        prevPost: index < posts.length - 1 ? posts[index + 1] : null,
+        nextPost: index > 0 ? posts[index - 1] : null
+      }
+    };
+  });
+}
+
+const { post, allPosts, prevPost, nextPost } = Astro.props;
+const { Content } = await post.render();
+const relatedPosts = getRelatedPosts(post, allPosts, 3);
+---
+
+<ArticleLayout
+  post={post}
+  allPosts={allPosts}
+  relatedPosts={relatedPosts}
+  prevPost={prevPost}
+  nextPost={nextPost}
+>
+  <Content />
+</ArticleLayout>

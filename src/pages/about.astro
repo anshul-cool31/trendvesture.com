@@ -1,0 +1,281 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import { authors } from '../data/authors.js';
+import { siteConfig } from '../data/site.js';
+
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'About TrendVesture' }
+];
+---
+
+<BaseLayout
+  title="About TrendVesture | Luxury Fashion Magazine & Editorial Mission"
+  description="Learn about TrendVesture, our editorial philosophy, commitment to artisanal craftsmanship, runway coverage, and our senior masthead editors."
+>
+  <div class="about-page-wrap">
+    <div class="container">
+      <Breadcrumbs items={breadcrumbs} />
+
+      <header class="about-hero">
+        <span class="about-badge">Editorial Masthead</span>
+        <h1 class="about-title">The Art of Contemporary Style & Sartorial Journalism</h1>
+        <p class="about-lead">
+          Founded as an independent fashion publication, TrendVesture documents the dynamic dialogue between runway craftsmanship, urban street aesthetics, and mindful living.
+        </p>
+      </header>
+
+      <div class="about-main-image-wrap">
+        <img 
+          src="/images/branding/og-default.jpg" 
+          alt="TrendVesture Editorial Studio" 
+          class="about-main-image"
+        />
+      </div>
+
+      <div class="about-content-body">
+        <section class="about-section">
+          <h2>Our Editorial Mission</h2>
+          <p>
+            At TrendVesture, we believe that fashion is humanity's most immediate and visceral form of self-expression. In an era dominated by hyper-accelerated digital micro-trends and ephemeral disposable garments, our mission is to champion enduring sartorial value, thoughtful wardrobe curation, and rigorous fashion journalism.
+          </p>
+          <p>
+            We view clothing not as commodities to be consumed and discarded, but as architectural, tactile artifacts that shape identity, instill confidence, and communicate cultural nuance.
+          </p>
+        </section>
+
+        <section class="about-section">
+          <h2>What We Cover</h2>
+          <div class="about-pillars-grid">
+            <div class="about-pillar-card">
+              <h3>Runway & High Couture</h3>
+              <p>Uncompromising, front-row critical analyses of fashion month collections across New York, London, Milan, and Paris.</p>
+            </div>
+            <div class="about-pillar-card">
+              <h3>Contemporary Menswear</h3>
+              <p>Precision tailoring, modern street culture, sneaker craftsmanship, and essential grooming rituals for the discerning gentleman.</p>
+            </div>
+            <div class="about-pillar-card">
+              <h3>Sustainable Custodianship</h3>
+              <p>Promoting circular fashion economics, textile longevity, vintage luxury archiving, and ethical manufacturing transparency.</p>
+            </div>
+            <div class="about-pillar-card">
+              <h3>Practical Wardrobe Architecture</h3>
+              <p>Actionable capsule wardrobe blueprints, styling guides, cost-per-wear equations, and sensible shopping methodologies.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Editors Masthead Section -->
+        <section class="about-section masthead-section">
+          <h2>Our Editorial Team</h2>
+          <div class="about-authors-grid">
+            {authors.map(author => (
+              <div class="about-author-card">
+                <img src={author.avatar} alt={author.name} class="about-author-avatar" />
+                <div class="about-author-info">
+                  <h3 class="about-author-name">{author.name}</h3>
+                  <p class="about-author-role">{author.designation}</p>
+                  <p class="about-author-bio">{author.bio}</p>
+                  <a href={`/author/${author.slug}/`} class="about-author-link">
+                    Read Articles by {author.name} →
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <!-- Legal & Standards Anchors -->
+        <section class="about-section" id="standards">
+          <h2>Editorial Integrity & Publishing Standards</h2>
+          <p>
+            TrendVesture adheres to strict editorial guidelines. Our reviews, styling guides, and brand highlights are driven by genuine aesthetic merit, construction quality, and textile performance. We do not accept paid compensation to fabricate positive opinions or product-testing experiences.
+          </p>
+        </section>
+
+        <section class="about-section" id="privacy">
+          <h2>Privacy & Terms</h2>
+          <p>
+            We respect the privacy of our global readership. TrendVesture operates with minimal analytical tracking and complies with international privacy frameworks. For complete details, contact our editorial desk at <a href="mailto:editorial@trendvesture.com">editorial@trendvesture.com</a>.
+          </p>
+        </section>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-page-wrap {
+    padding: 32px 0 64px;
+  }
+
+  .about-hero {
+    text-align: center;
+    max-width: 860px;
+    margin: 0 auto 40px;
+  }
+
+  .about-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .about-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 18px;
+  }
+
+  .about-lead {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .about-main-image-wrap {
+    max-width: 1040px;
+    margin: 0 auto 56px;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  .about-main-image {
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+  }
+
+  .about-content-body {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .about-section {
+    margin-bottom: 56px;
+  }
+
+  .about-section h2 {
+    font-family: var(--font-serif);
+    font-size: 1.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-medium);
+  }
+
+  .about-section p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .about-pillars-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+  }
+
+  .about-pillar-card {
+    padding: 24px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+  }
+
+  .about-pillar-card h3 {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+  }
+
+  .about-pillar-card p {
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+  }
+
+  .about-authors-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    margin-top: 28px;
+  }
+
+  .about-author-card {
+    display: flex;
+    gap: 24px;
+    padding: 28px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    align-items: flex-start;
+  }
+
+  .about-author-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .about-author-name {
+    font-family: var(--font-serif);
+    font-size: 1.35rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .about-author-role {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+
+  .about-author-bio {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .about-author-link {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .about-author-link:hover {
+    text-decoration: underline;
+  }
+
+  @media (max-width: 680px) {
+    .about-pillars-grid {
+      grid-template-columns: 1fr;
+    }
+    .about-author-card {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  }
+</style>

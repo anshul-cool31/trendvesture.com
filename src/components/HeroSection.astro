@@ -1,0 +1,52 @@
+---
+import ArticleCard from './ArticleCard.astro';
+
+interface Props {
+  posts: Array<any>;
+}
+
+const { posts } = Astro.props;
+
+// We need 5 posts for the 3-column layout:
+// left: posts[0], posts[1]
+// center: posts[2] (hero)
+// right: posts[3], posts[4]
+const leftPosts = posts.slice(0, 2);
+const centerPost = posts[2] || posts[0];
+const rightPosts = posts.slice(3, 5);
+---
+
+<section class="hero-section" aria-label="Featured Runway & Style Highlights">
+  <div class="container">
+    <div class="hero-3col-grid">
+      <!-- Left Column: 2 Stacked Cards -->
+      <div class="hero-side-column hero-col-left">
+        {leftPosts.map(post => (
+          <ArticleCard post={post} variant="small" />
+        ))}
+      </div>
+
+      <!-- Center Column: 1 Large Hero Card -->
+      <div class="hero-center-column">
+        {centerPost && (
+          <ArticleCard post={centerPost} variant="hero" showExcerpt={true} />
+        )}
+      </div>
+
+      <!-- Right Column: 2 Stacked Cards -->
+      <div class="hero-side-column hero-col-right">
+        {rightPosts.map(post => (
+          <ArticleCard post={post} variant="small" />
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero-section {
+    padding-top: 10px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border-light);
+  }
+</style>

@@ -5,6 +5,14 @@ export const siteConfig = {
   url: "https://trendvesture.com",
   logoText: "TRENDVESTURE",
   tagline: "The Pulse of Contemporary Fashion & Editorial Style",
+  logo: {
+    useImageLogo: true,
+    image: "/logo.png",
+    imageLight: "/logo-light.png",
+    alt: "TrendVesture",
+    width: 224,
+    height: 46
+  },
   locale: "en_US",
   defaultOgImage: "/images/branding/og-default.jpg",
   author: "TrendVesture Editorial Team",

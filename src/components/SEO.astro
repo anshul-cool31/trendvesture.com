@@ -47,7 +47,7 @@ schemas.push({
   "url": siteConfig.url,
   "logo": {
     "@type": "ImageObject",
-    "url": new URL("/favicon.svg", siteConfig.url).toString()
+    "url": new URL(siteConfig.logo?.image || "/logo.png", siteConfig.url).toString()
   },
   "sameAs": Object.values(siteConfig.social)
 });
@@ -88,7 +88,7 @@ if (type === 'article' && article) {
       "name": siteConfig.name,
       "logo": {
         "@type": "ImageObject",
-        "url": new URL("/favicon.svg", siteConfig.url).toString()
+        "url": new URL(siteConfig.logo?.image || "/logo.png", siteConfig.url).toString()
       }
     },
     "articleSection": article.section,

@@ -1,6 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <rect width="100" height="100" rx="16" fill="#111111" />
-  <text x="50" y="65" font-family="'Playfair Display', serif, Georgia" font-size="46" font-weight="700" fill="#ffffff" text-anchor="middle" letter-spacing="1">TV</text>
-  <circle cx="78" cy="30" r="5" fill="#c53030" />
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 250 250">
+  <!-- Generator: Adobe Illustrator 29.0.1, SVG Export Plug-In . SVG Version: 2.1.0 Build 192)  -->
+  <defs>
+    <style>
+      .st0 {
+        fill: #c53030;
+      }
+    </style>
+  </defs>
+  <path class="st0" d="M162.92,66.93l-3.03-.54c-6.67-27.48-36.22-32.02-60.46-30.79-.62.03-1.51-.36-1.36.54,7.93,4.39,12.85,13.07,16.58,21.07,19.68,42.14,34.57,88.4,53.51,131.16.42.96.88,2.24,1.31,3.08.29.57-.29,1.04,1.14.78L235.96,31.55l6.66-.06-76.5,186.21c-1.12,1.78-4.26.61-6.16.96L94.87,60.52c-10.12-21.58-19.4-27.19-43.72-24.29-18.71,2.23-36.52,10.6-40.52,30.65l-3.25-.23L15.98,31.28l138.73.17,8.21,35.48Z"/>
+  <path d="M92.02,218.63h-20.34V42.75c5.92,1.7,10.17,6.04,13.28,11.17.88,1.45,6.5,12.54,6.5,13.28v150.59c0,.17.7.42.55.82Z"/>
 </svg>
-

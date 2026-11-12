@@ -2,15 +2,45 @@
 import { siteConfig } from '../data/site.js';
 
 interface Props {
-  variant?: 'header' | 'footer';
+  variant?: 'header' | 'footer' | 'drawer';
+  class?: string;
 }
 
-const { variant = 'header' } = Astro.props;
+const { variant = 'header', class: className } = Astro.props;
+const useImage = siteConfig.logo?.useImageLogo ?? true;
+const logoImage = siteConfig.logo?.image || '/logo.png';
+const logoImageLight = siteConfig.logo?.imageLight || '/logo-light.png';
 ---
 
-<a href="/" class={`site-logo site-logo-${variant}`} aria-label={siteConfig.name}>
-  <span class="site-logo-text">{siteConfig.logoText}</span>
-  <span class="site-logo-tagline">{siteConfig.tagline}</span>
+<a href="/" class:list={[`site-logo site-logo-${variant}`, className]} aria-label={siteConfig.name}>
+  {useImage ? (
+    <div class="site-logo-img-wrap">
+      <img
+        src={logoImage}
+        alt={siteConfig.logo?.alt || siteConfig.name}
+        class="site-logo-img site-logo-img-dark"
+        width={variant === 'footer' ? 204 : variant === 'drawer' ? 175 : 224}
+        height={variant === 'footer' ? 42 : variant === 'drawer' ? 36 : 46}
+        loading={variant === 'header' ? 'eager' : 'lazy'}
+        fetchpriority={variant === 'header' ? 'high' : 'auto'}
+        decoding="async"
+      />
+      <img
+        src={logoImageLight}
+        alt={siteConfig.logo?.alt || siteConfig.name}
+        class="site-logo-img site-logo-img-light"
+        width={variant === 'footer' ? 204 : variant === 'drawer' ? 175 : 224}
+        height={variant === 'footer' ? 42 : variant === 'drawer' ? 36 : 46}
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  ) : (
+    <>
+      <span class="site-logo-text">{siteConfig.logoText}</span>
+      <span class="site-logo-tagline">{siteConfig.tagline}</span>
+    </>
+  )}
 </a>
 
 <style>
@@ -20,8 +50,65 @@ const { variant = 'header' } = Astro.props;
     align-items: center;
     text-decoration: none;
     user-select: none;
+    line-height: 1;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
   }
 
+  .site-logo:hover {
+    opacity: 0.88;
+    transform: translateY(-1px);
+  }
+
+  .site-logo-img-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .site-logo-img {
+    display: block;
+    height: 46px;
+    width: auto;
+    max-width: 224px;
+    object-fit: contain;
+    transition: opacity var(--transition-fast);
+  }
+
+  /* Default (Light Mode): show dark/black logo, hide light/white logo */
+  .site-logo-img-dark {
+    display: block !important;
+  }
+  .site-logo-img-light {
+    display: none !important;
+  }
+
+  /* Dark Theme: show light/white logo, hide dark/black logo */
+  :global([data-theme="dark"]) .site-logo-img-dark {
+    display: none !important;
+  }
+  :global([data-theme="dark"]) .site-logo-img-light {
+    display: block !important;
+  }
+
+  /* Footer Variant */
+  .site-logo-footer {
+    align-items: flex-start;
+  }
+  .site-logo-footer .site-logo-img {
+    height: 42px;
+    max-width: 204px;
+  }
+
+  /* Drawer Variant */
+  .site-logo-drawer {
+    align-items: flex-start;
+  }
+  .site-logo-drawer .site-logo-img {
+    height: 36px;
+    max-width: 175px;
+  }
+
+  /* Fallback text styles */
   .site-logo-text {
     font-family: var(--font-serif);
     font-size: 2.25rem;
@@ -52,6 +139,10 @@ const { variant = 'header' } = Astro.props;
   }
 
   @media (max-width: 768px) {
+    .site-logo-img {
+      height: 38px;
+      max-width: 185px;
+    }
     .site-logo-text {
       font-size: 1.65rem;
       letter-spacing: 0.1em;
@@ -61,5 +152,11 @@ const { variant = 'header' } = Astro.props;
       letter-spacing: 0.18em;
     }
   }
-</style>
 
+  @media (max-width: 480px) {
+    .site-logo-img {
+      height: 32px;
+      max-width: 156px;
+    }
+  }
+</style>

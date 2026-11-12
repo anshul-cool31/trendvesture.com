@@ -6,7 +6,7 @@ import { slugify } from '../utils/categories.js';
 
 export async function GET() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
-  const baseUrl = siteConfig.url;
+  const baseUrl = siteConfig.url.replace(/\/$/, '');
 
   const staticUrls = [
     { loc: `${baseUrl}/`, priority: '1.0', changefreq: 'daily' },
@@ -37,6 +37,20 @@ export async function GET() {
     changefreq: 'weekly'
   }));
 
+  // Dynamically collect all unique tags from published posts
+  const uniqueTags = new Set();
+  posts.forEach(post => {
+    (post.data.tags || []).forEach(tag => {
+      uniqueTags.add(slugify(tag));
+    });
+  });
+
+  const tagUrls = Array.from(uniqueTags).map(tagSlug => ({
+    loc: `${baseUrl}/tags/${tagSlug}/`,
+    priority: '0.6',
+    changefreq: 'weekly'
+  }));
+
   const postUrls = posts.map(post => ({
     loc: `${baseUrl}/posts/${post.slug}/`,
     lastmod: new Date(post.data.updatedDate || post.data.pubDate).toISOString().split('T')[0],
@@ -44,7 +58,7 @@ export async function GET() {
     changefreq: 'monthly'
   }));
 
-  const allUrls = [...staticUrls, ...categoryUrls, ...authorUrls, ...postUrls];
+  const allUrls = [...staticUrls, ...categoryUrls, ...authorUrls, ...tagUrls, ...postUrls];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

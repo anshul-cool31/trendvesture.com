@@ -7,20 +7,33 @@ export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => !data.draft);
   posts.sort((a, b) => new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime());
 
-  return posts.map((post, index) => {
-    // Determine post slug without directory prefix if present
-    const cleanSlug = post.slug.includes('/') ? post.slug.split('/').pop() : post.slug;
-    
-    return {
-      params: { slug: cleanSlug },
-      props: {
-        post,
-        allPosts: posts,
-        prevPost: index < posts.length - 1 ? posts[index + 1] : null,
-        nextPost: index > 0 ? posts[index - 1] : null
-      }
+  const paths = [];
+
+  posts.forEach((post, index) => {
+    const props = {
+      post,
+      allPosts: posts,
+      prevPost: index < posts.length - 1 ? posts[index + 1] : null,
+      nextPost: index > 0 ? posts[index - 1] : null
     };
+
+    // Primary route matching post.slug (e.g. /posts/category/post-title/)
+    paths.push({
+      params: { slug: post.slug },
+      props
+    });
+
+    // Also support short route without directory prefix (e.g. /posts/post-title/)
+    if (post.slug.includes('/')) {
+      const shortSlug = post.slug.split('/').pop();
+      paths.push({
+        params: { slug: shortSlug },
+        props
+      });
+    }
   });
+
+  return paths;
 }
 
 const { post, allPosts, prevPost, nextPost } = Astro.props;
